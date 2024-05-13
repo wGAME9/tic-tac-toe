@@ -1,31 +1,14 @@
 package tictactoe
 
 import (
-	"bytes"
-	"log"
-
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/examples/resources/fonts"
 	"github.com/hajimehoshi/ebiten/v2/text/v2"
 )
 
 const (
-	fontSize    = 48.0
 	blockSize   = 100
 	blockMargin = 4
 )
-
-var (
-	mplusFaceSource *text.GoTextFaceSource
-)
-
-func init() {
-	s, err := text.NewGoTextFaceSource(bytes.NewReader(fonts.MPlus1pRegular_ttf))
-	if err != nil {
-		log.Fatal(err)
-	}
-	mplusFaceSource = s
-}
 
 type Block struct {
 	x, y   int
@@ -67,7 +50,7 @@ func (block *Block) Draw(boardImage *ebiten.Image) {
 		block.player.String(),
 		&text.GoTextFace{
 			Source: mplusFaceSource,
-			Size:   fontSize,
+			Size:   bigFontSize,
 		},
 		drawPlayerOpt,
 	)
