@@ -91,6 +91,12 @@ func (board *Board) Draw(boardImage *ebiten.Image) {
 }
 
 func (board *Board) IsGameOver() bool {
+	hasWinner := board.HasWinner()
+	isDraw := board.IsDraw()
+	return hasWinner || isDraw
+}
+
+func (board *Board) HasWinner() bool {
 	return board.winner != playerUnknown
 }
 
@@ -106,6 +112,18 @@ func (board *Board) IsCurrentPlayerWin() bool {
 	return board.isRowFilled(board.currentPlayer) ||
 		board.isColFilled(board.currentPlayer) ||
 		board.isDiagonalFilled(board.currentPlayer)
+}
+
+func (board *Board) IsDraw() bool {
+	for i := range board.blocks {
+		for j := range board.blocks[i] {
+			if board.blocks[i][j].Player() == playerUnknown {
+				return false
+			}
+		}
+	}
+
+	return true
 }
 
 func (board *Board) isRowFilled(player Player) bool {
