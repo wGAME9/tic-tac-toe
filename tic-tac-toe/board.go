@@ -1,6 +1,8 @@
 package tictactoe
 
 import (
+	"fmt"
+
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
@@ -35,6 +37,18 @@ func (board *Board) nextPlayer() {
 	}
 
 	board.currentPlayer = playerX
+}
+
+func (board *Board) Message() string {
+	if board.HasWinner() {
+		return fmt.Sprintf("Player %s wins!", board.Winner().String())
+	}
+
+	if board.IsDraw() {
+		return "Draw!"
+	}
+
+	return fmt.Sprintf("Player %s's turn", board.currentPlayer.String())
 }
 
 func (board *Board) Update(input *Input) {

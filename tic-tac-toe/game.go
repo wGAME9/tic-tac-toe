@@ -1,8 +1,11 @@
 package tictactoe
 
 import (
+	"fmt"
+
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
+	"github.com/hajimehoshi/ebiten/v2/text/v2"
 )
 
 const (
@@ -27,7 +30,7 @@ func NewGame() *Game {
 }
 
 func (g *Game) Update() error {
-	if g.isGameOver() {
+	if g.board.IsGameOver() {
 		if inpututil.IsKeyJustPressed(ebiten.KeyR) {
 			g.reset()
 		}
@@ -65,14 +68,35 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 	drawBoardOpt.GeoM.Translate(float64(drawBoardAtX), float64(drawBoardAtY))
 	screen.DrawImage(g.boardImage, drawBoardOpt)
+
+	message := g.Message()
+
+	drawMessageOpt := &text.DrawOptions{}
+	drawMessageOpt.GeoM.Translate(float64(drawBoardAtX), 60)
+	drawMessageOpt.ColorScale.ScaleWithColor(frameColor)
+	drawMessageOpt.LineSpacing = normalFontSize * 1.2
+	text.Draw(
+		screen,
+		message,
+		&text.GoTextFace{
+			Source: mplusFaceSource,
+			Size:   normalFontSize,
+		},
+		drawMessageOpt,
+	)
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (width, height int) {
 	return screenWidth, screenHeight
 }
 
-func (g *Game) isGameOver() bool {
-	return g.board.IsGameOver()
+func (g *Game) Message() string {
+	boardMessage := g.board.Message()
+	if g.board.IsGameOver() {
+		return fmt.Sprintf("%s\nPress R to restart.", boardMessage)
+	}
+
+	return boardMessage
 }
 
 func (g *Game) reset() {
