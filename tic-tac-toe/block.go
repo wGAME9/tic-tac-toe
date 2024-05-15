@@ -2,7 +2,7 @@ package tictactoe
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/text/v2"
+	"github.com/hajimehoshi/ebiten/v2/vector"
 )
 
 const (
@@ -38,22 +38,42 @@ func (block *Block) Draw(boardImage *ebiten.Image) {
 		return
 	}
 
-	drawPlayerOpt := &text.DrawOptions{}
-	playerX := float64(block.x) + float64(blockSize/2)
-	playerY := float64(block.y) + float64(blockSize/2)
-	drawPlayerOpt.GeoM.Translate(playerX, playerY)
-	drawPlayerOpt.ColorScale.ScaleWithColor(block.player.Color())
-	drawPlayerOpt.PrimaryAlign = text.AlignCenter
-	drawPlayerOpt.SecondaryAlign = text.AlignCenter
-	text.Draw(
-		boardImage,
-		block.player.String(),
-		&text.GoTextFace{
-			Source: mplusFaceSource,
-			Size:   bigFontSize,
-		},
-		drawPlayerOpt,
-	)
+	// TODO: refactor this to make it more readable and maintainable
+	// maybe making it a method of Player
+	if block.Player() == playerX {
+		// Draw a cross using vector line
+		x, y := block.x, block.y
+		padding := blockSize / 4
+		vector.StrokeLine(
+			boardImage,
+			float32(x+padding), float32(y+padding),
+			float32(x+blockSize-padding), float32(y+blockSize-padding),
+			5,
+			colorBlue,
+			true,
+		)
+
+		vector.StrokeLine(
+			boardImage,
+			float32(x+blockSize-padding), float32(y+padding),
+			float32(x+padding), float32(y+blockSize-padding),
+			5,
+			colorBlue,
+			true,
+		)
+	} else {
+		centerX := float32(block.x) + float32(blockSize/2)
+		centerY := float32(block.y) + float32(blockSize/2)
+		r := float32(blockSize) / 4
+		vector.StrokeCircle(
+			boardImage,
+			centerX, centerY, r,
+			5,
+			block.player.Color(),
+			true,
+		)
+	}
+
 }
 
 func (block *Block) BeingClicked(mouseX, mouseY int) bool {
