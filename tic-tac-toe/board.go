@@ -259,6 +259,8 @@ func (board *Board) setWinningLine() {
 		return
 	}
 
+	color := board.Winner().Color()
+
 	var line animation.Animation
 
 	switch {
@@ -273,7 +275,7 @@ func (board *Board) setWinningLine() {
 			Y: float32(board.blocks[onRow][board.size-1].y) + blockSize/2,
 		}
 
-		line = animation.NewLine(startingPoint, endingPoint, 5, 5, colorRed, true)
+		line = animation.NewLine(startingPoint, endingPoint, 5, 5, color, true)
 
 	case board.isColWinning:
 		onCol := board.winningOnCol
@@ -287,7 +289,7 @@ func (board *Board) setWinningLine() {
 			Y: float32(board.blocks[board.size-1][onCol].y) + blockSize - linePadding,
 		}
 
-		line = animation.NewLine(startingPoint, endingPoint, 5, 5, colorRed, true)
+		line = animation.NewLine(startingPoint, endingPoint, 5, 5, color, true)
 
 	case board.isDiagonalWinning:
 		switch board.winningOnDiagonalDirection {
@@ -302,7 +304,7 @@ func (board *Board) setWinningLine() {
 				Y: float32(board.blocks[board.size-1][board.size-1].y) + blockSize - linePadding,
 			}
 
-			line = animation.NewLine(startingPoint, endingPoint, 5, 5, colorRed, true)
+			line = animation.NewLine(startingPoint, endingPoint, 5, 5, color, true)
 
 		case antiDiagonal:
 			startingPoint := animation.Point{
@@ -315,7 +317,7 @@ func (board *Board) setWinningLine() {
 				Y: float32(board.blocks[board.size-1][0].y) + blockSize - linePadding,
 			}
 
-			line = animation.NewLine(startingPoint, endingPoint, 5, 5, colorRed, true)
+			line = animation.NewLine(startingPoint, endingPoint, 5, 5, color, true)
 		}
 	}
 
