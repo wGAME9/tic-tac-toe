@@ -77,8 +77,8 @@ func (block *Block) Draw(boardImage *ebiten.Image) {
 }
 
 func (block *Block) BeingClicked(mouseX, mouseY int) bool {
-	isInXRange := block.x <= mouseX && mouseX < block.x+blockSize
-	isInYRange := block.y <= mouseY && mouseY < block.y+blockSize
+	isInXRange := block.x < mouseX && mouseX < block.x+blockSize
+	isInYRange := block.y < mouseY && mouseY < block.y+blockSize
 
 	return isInXRange && isInYRange
 }
