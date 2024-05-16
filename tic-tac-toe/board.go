@@ -15,10 +15,10 @@ type Board struct {
 
 func NewBoard(size int) *Board {
 	blocks := make([][]*Block, size)
-	for i := range size {
-		blocks[i] = make([]*Block, size)
-		for j := range size {
-			blocks[i][j] = NewBlock(i, j)
+	for rowNum := range size {
+		blocks[rowNum] = make([]*Block, size)
+		for colNum := range size {
+			blocks[rowNum][colNum] = NewBlock(rowNum, colNum)
 		}
 	}
 

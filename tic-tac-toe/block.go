@@ -15,9 +15,9 @@ type Block struct {
 	player Player
 }
 
-func NewBlock(i, j int) *Block {
-	x := i*blockSize + (i+1)*blockMargin
-	y := j*blockSize + (j+1)*blockMargin
+func NewBlock(rowNum, colNum int) *Block {
+	x := colNum*blockSize + (colNum+1)*blockMargin
+	y := rowNum*blockSize + (rowNum+1)*blockMargin
 
 	return &Block{
 		x:      x,
