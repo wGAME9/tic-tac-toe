@@ -123,9 +123,18 @@ func (board *Board) SetWinner(player Player) {
 }
 
 func (board *Board) IsCurrentPlayerWin() bool {
-	return board.isRowFilled(board.currentPlayer) ||
-		board.isColFilled(board.currentPlayer) ||
-		board.isDiagonalFilled(board.currentPlayer)
+	isRowFilled, rowNum := board.isRowFilled(board.currentPlayer)
+	isColFilled, colNum := board.isColFilled(board.currentPlayer)
+	isDiagonalFilled, diagonalDirection := board.isDiagonalFilled(board.currentPlayer)
+
+	isWinning := isRowFilled || isColFilled || isDiagonalFilled
+
+	if isWinning {
+		// TODO: use these variables to draw a line on the winning row/col/diagonal
+		_, _, _ = rowNum, colNum, diagonalDirection
+	}
+
+	return isWinning
 }
 
 func (board *Board) IsDraw() bool {
@@ -140,7 +149,7 @@ func (board *Board) IsDraw() bool {
 	return true
 }
 
-func (board *Board) isRowFilled(player Player) bool {
+func (board *Board) isRowFilled(player Player) (bool, int) {
 	for row := range board.size {
 		filled := true
 		for col := range board.size {
@@ -151,14 +160,14 @@ func (board *Board) isRowFilled(player Player) bool {
 		}
 
 		if filled {
-			return true
+			return true, row
 		}
 	}
 
-	return false
+	return false, 0
 }
 
-func (board *Board) isColFilled(player Player) bool {
+func (board *Board) isColFilled(player Player) (bool, int) {
 	for colNum := range board.size {
 		filled := true
 		for rowNum := range board.size {
@@ -169,14 +178,14 @@ func (board *Board) isColFilled(player Player) bool {
 		}
 
 		if filled {
-			return true
+			return true, colNum
 		}
 	}
 
-	return false
+	return false, 0
 }
 
-func (board *Board) isDiagonalFilled(player Player) bool {
+func (board *Board) isDiagonalFilled(player Player) (bool, diagonalDirection) {
 	filled := true
 	// main diagonal
 	for i := range board.size {
@@ -187,7 +196,7 @@ func (board *Board) isDiagonalFilled(player Player) bool {
 	}
 
 	if filled {
-		return true
+		return true, mainDiagonal
 	}
 
 	filled = true
@@ -198,6 +207,9 @@ func (board *Board) isDiagonalFilled(player Player) bool {
 			break
 		}
 	}
+	if filled {
+		return true, antiDiagonal
+	}
 
-	return filled
+	return false, unknownDiagonal
 }
