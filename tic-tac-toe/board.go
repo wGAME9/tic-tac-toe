@@ -61,11 +61,11 @@ func (board *Board) Update(input *Input) {
 	}
 	mouseX, mouseY := input.MousePosition()
 
-	for i := range board.blocks {
-		for j := range board.blocks[i] {
-			block := board.blocks[i][j]
-			cannnotSetThisBlock := !block.CanSetPlayer()
-			if cannnotSetThisBlock {
+	for row := range board.blocks {
+		for col := range board.blocks[row] {
+			block := board.blocks[row][col]
+			cannotSetThisBlock := !block.CanSetPlayer()
+			if cannotSetThisBlock {
 				continue
 			}
 
@@ -97,9 +97,9 @@ func (board *Board) Size() (int, int) {
 func (board *Board) Draw(boardImage *ebiten.Image) {
 	boardImage.Fill(frameColor)
 
-	for i := range board.blocks {
-		for j := range board.blocks[i] {
-			board.blocks[i][j].Draw(boardImage)
+	for row := range board.blocks {
+		for col := range board.blocks[row] {
+			board.blocks[row][col].Draw(boardImage)
 		}
 	}
 }
@@ -141,10 +141,10 @@ func (board *Board) IsDraw() bool {
 }
 
 func (board *Board) isRowFilled(player Player) bool {
-	for i := range board.blocks {
+	for row := range board.size {
 		filled := true
-		for j := range board.blocks[i] {
-			if board.blocks[i][j].Player() != player {
+		for col := range board.size {
+			if board.blocks[row][col].Player() != player {
 				filled = false
 				break
 			}
@@ -159,10 +159,10 @@ func (board *Board) isRowFilled(player Player) bool {
 }
 
 func (board *Board) isColFilled(player Player) bool {
-	for j := range board.blocks {
+	for colNum := range board.size {
 		filled := true
-		for i := range board.blocks[j] {
-			if board.blocks[i][j].Player() != player {
+		for rowNum := range board.size {
+			if board.blocks[rowNum][colNum].Player() != player {
 				filled = false
 				break
 			}
@@ -178,7 +178,8 @@ func (board *Board) isColFilled(player Player) bool {
 
 func (board *Board) isDiagonalFilled(player Player) bool {
 	filled := true
-	for i := range board.blocks {
+	// main diagonal
+	for i := range board.size {
 		if board.blocks[i][i].Player() != player {
 			filled = false
 			break
@@ -190,7 +191,8 @@ func (board *Board) isDiagonalFilled(player Player) bool {
 	}
 
 	filled = true
-	for i := range board.blocks {
+	// anti diagonal
+	for i := range board.size {
 		if board.blocks[i][board.size-1-i].Player() != player {
 			filled = false
 			break
