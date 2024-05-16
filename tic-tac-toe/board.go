@@ -3,7 +3,15 @@ package tictactoe
 import (
 	"fmt"
 
+	"github.com/wGAME9/animation/animation"
+
 	"github.com/hajimehoshi/ebiten/v2"
+)
+
+const (
+	lineSpeed   = 10
+	lineWidth   = 5
+	linePadding = 10
 )
 
 type Board struct {
@@ -11,6 +19,14 @@ type Board struct {
 	size          int
 	currentPlayer Player
 	winner        Player
+
+	winningLine                animation.Animation
+	isRowWinning               bool
+	winningOnRow               int
+	isColWinning               bool
+	winningOnCol               int
+	isDiagonalWinning          bool
+	winningOnDiagonalDirection diagonalDirection
 }
 
 func NewBoard(size int) *Board {
@@ -52,7 +68,12 @@ func (board *Board) Message() string {
 }
 
 func (board *Board) Update(input *Input) {
+	if board.winningLine != nil {
+		board.winningLine.Update()
+	}
+
 	if board.IsGameOver() {
+		board.setWinningLine()
 		return
 	}
 
@@ -85,6 +106,7 @@ func (board *Board) Update(input *Input) {
 			break
 		}
 	}
+
 }
 
 func (board *Board) Size() (int, int) {
@@ -101,6 +123,11 @@ func (board *Board) Draw(boardImage *ebiten.Image) {
 		for col := range board.blocks[row] {
 			board.blocks[row][col].Draw(boardImage)
 		}
+	}
+
+	if board.winningLine != nil {
+		winningLineImg := board.winningLine.Image()
+		boardImage.DrawImage(winningLineImg, &ebiten.DrawImageOptions{})
 	}
 }
 
@@ -130,8 +157,17 @@ func (board *Board) IsCurrentPlayerWin() bool {
 	isWinning := isRowFilled || isColFilled || isDiagonalFilled
 
 	if isWinning {
-		// TODO: use these variables to draw a line on the winning row/col/diagonal
-		_, _, _ = rowNum, colNum, diagonalDirection
+		switch {
+		case isRowFilled:
+			board.isRowWinning = true
+			board.winningOnRow = rowNum
+		case isColFilled:
+			board.isColWinning = true
+			board.winningOnCol = colNum
+		case isDiagonalFilled:
+			board.isDiagonalWinning = true
+			board.winningOnDiagonalDirection = diagonalDirection
+		}
 	}
 
 	return isWinning
@@ -212,4 +248,76 @@ func (board *Board) isDiagonalFilled(player Player) (bool, diagonalDirection) {
 	}
 
 	return false, unknownDiagonal
+}
+
+func (board *Board) setWinningLine() {
+	if !board.IsGameOver() {
+		return
+	}
+
+	if board.winningLine != nil {
+		return
+	}
+
+	var line animation.Animation
+
+	switch {
+	case board.isRowWinning:
+		onRow := board.winningOnRow
+		startingPoint := animation.Point{
+			X: float32(board.blocks[onRow][0].x) + linePadding,
+			Y: float32(board.blocks[onRow][0].y) + blockSize/2,
+		}
+		endingPoint := animation.Point{
+			X: float32(board.blocks[onRow][board.size-1].x) + blockSize - linePadding,
+			Y: float32(board.blocks[onRow][board.size-1].y) + blockSize/2,
+		}
+
+		line = animation.NewLine(startingPoint, endingPoint, 5, 5, colorRed, true)
+
+	case board.isColWinning:
+		onCol := board.winningOnCol
+		startingPoint := animation.Point{
+			X: float32(board.blocks[0][onCol].x) + blockSize/2,
+			Y: float32(board.blocks[0][onCol].y) + linePadding,
+		}
+
+		endingPoint := animation.Point{
+			X: float32(board.blocks[board.size-1][onCol].x) + blockSize/2,
+			Y: float32(board.blocks[board.size-1][onCol].y) + blockSize - linePadding,
+		}
+
+		line = animation.NewLine(startingPoint, endingPoint, 5, 5, colorRed, true)
+
+	case board.isDiagonalWinning:
+		switch board.winningOnDiagonalDirection {
+		case mainDiagonal:
+			startingPoint := animation.Point{
+				X: float32(board.blocks[0][0].x) + linePadding,
+				Y: float32(board.blocks[0][0].y) + linePadding,
+			}
+
+			endingPoint := animation.Point{
+				X: float32(board.blocks[board.size-1][board.size-1].x) + blockSize - linePadding,
+				Y: float32(board.blocks[board.size-1][board.size-1].y) + blockSize - linePadding,
+			}
+
+			line = animation.NewLine(startingPoint, endingPoint, 5, 5, colorRed, true)
+
+		case antiDiagonal:
+			startingPoint := animation.Point{
+				X: float32(board.blocks[0][board.size-1].x) + blockSize - linePadding,
+				Y: float32(board.blocks[0][board.size-1].y) + linePadding,
+			}
+
+			endingPoint := animation.Point{
+				X: float32(board.blocks[board.size-1][0].x) + linePadding,
+				Y: float32(board.blocks[board.size-1][0].y) + blockSize - linePadding,
+			}
+
+			line = animation.NewLine(startingPoint, endingPoint, 5, 5, colorRed, true)
+		}
+	}
+
+	board.winningLine = line
 }
