@@ -34,8 +34,6 @@ func (g *Game) Update() error {
 		if inpututil.IsKeyJustPressed(ebiten.KeyR) {
 			g.reset()
 		}
-
-		return nil
 	}
 
 	g.input.Update(g.boardX, g.boardY)

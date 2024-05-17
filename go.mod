@@ -10,6 +10,7 @@ require (
 	github.com/ebitengine/purego v0.7.0 // indirect
 	github.com/go-text/typesetting v0.1.1-0.20240325125605-c7936fe59984 // indirect
 	github.com/jezek/xgb v1.1.1 // indirect
+	github.com/wGAME9/animation v0.0.0-20240516030551-99b371723cc2 // indirect
 	golang.org/x/image v0.15.0 // indirect
 	golang.org/x/sync v0.6.0 // indirect
 	golang.org/x/sys v0.18.0 // indirect

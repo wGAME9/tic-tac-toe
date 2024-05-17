@@ -3,5 +3,5 @@
 A tic tac toe game.
 
 ## TODOs
-- [ ] Game information
+- [X] Game information
 - [ ] Game AI
