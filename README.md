@@ -2,6 +2,9 @@
 
 A tic tac toe game.
 
+![Game Playing](./game_playing.png)
+
 ## TODOs
-- [X] Game information
+
+- [x] Game information
 - [ ] Game AI
